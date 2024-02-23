@@ -1,6 +1,6 @@
 <h1 align="center" id="title">
 Amazon Price Tracker
-
+<br>
 <img id="Ibrahem" src="https://img.shields.io/badge/HEEM%20-%20Yellow?style=flat&label=IBRA&labelColor=%233b439c&color=%23418ce8">
 <img id="Star on GitHub" src="https://img.shields.io/badge/Stars%20-%20grey?style=flat&logo=GitHub">
 
@@ -10,7 +10,7 @@ Amazon Price Tracker
 
 ## 
 
-<p align="center" id="description"> A python app built to track Amazon prices of specific items and send an email notification when those items drop below a specific price. Built using web scrapping and Flask app.</p>
+`A python app built to track Amazon prices of specific items and send an email notification when those items drop below a specific price. Built using web scrapping and Flask app.` 
 
 ## Bash
 ```
