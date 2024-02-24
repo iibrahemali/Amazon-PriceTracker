@@ -1,47 +1,60 @@
-import requests 
-from bs4 import BeautifulSoup 
+import requests
+from bs4 import BeautifulSoup
 import smtplib
 import time
-
 import socket
-socket.gethostbyname("localhost")
 
-URL = 'https://www.amazon.com/LG-UltraFine-International-Certified-Refurbished/dp/B07D24BQBQ/ref=sr_1_3?keywords=lg+macbook+pro+display&qid=1563419236&s=gateway&sr=8-3'
+# Function to get user input for sensitive information
+def get_user_input(prompt):
+    return input(prompt).strip()
 
-headers = {"User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'}
+# Get user input for URL
+URL = get_user_input("Enter the Amazon product URL: ")
 
+# Get user input for User-Agent header
+user_agent = get_user_input("Enter your User-Agent (optional, press Enter to use default): ")
+headers = {"User-Agent": user_agent} if user_agent else {}
+
+# Get user input for email credentials
+email_sender = get_user_input("Enter your email address: ")
+email_password = get_user_input("Enter your email password: ")
+email_receiver = get_user_input("Enter the recipient's email address: ")
+
+# Set up the SMTP server
+smtp_server = get_user_input("Enter your SMTP server (e.g., smtp.google.com): ")
+smtp_port = int(get_user_input("Enter the SMTP port (e.g., 587): "))
+
+# Set up the email message
+subject = 'Price fell down!'
+body = f'Check the following Amazon link: {URL}'
+msg = f"Subject: {subject}\n\n{body}"
+
+# Function to check the price and send email
 def check_price():
-    page = requests.get(URL, headers = headers) #get the data from the webpage
-    soup1 = BeautifulSoup(page.content, 'html.parser') #get the html code made with javascript
-    soup2 = BeautifulSoup(soup1.prettify(), "html.parser")  #convert to proper format 
+    page = requests.get(URL, headers=headers)
+    soup1 = BeautifulSoup(page.content, 'html.parser')
+    soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
 
-    title = soup2.find(id="productTitle").get_text()   #grab the product title 
-    price=soup2.find(id="priceblock_ourprice").get_text()
+    title = soup2.find(id="productTitle").get_text().strip()
+    price = soup2.find(id="priceblock_ourprice").get_text()
     converted_price = float(price[1:4])
-    if(converted_price < 1000):
+
+    if converted_price < 1000:
         send_email()
 
     print(price)
-    print(title.strip())
-    #print(soup.prettify)
+    print(title)
 
+# Function to send email
 def send_email():
-
-    server = smtplib.SMTP('smtp.google.com', 587)
-    server.ehlo()       #command to connect to email servers
-    server.starttls()    #encrypt our connection 
+    server = smtplib.SMTP(smtp_server, smtp_port)
+    server.ehlo()
+    server.starttls()
     server.ehlo()
 
-    server.login('bluespoose@gmail.com', 'vxnfnjkizrotbgom')
-
-    subject = 'Price fell down!'  #subject of email
-    body = 'Check the following amazon link' + URL
-    msg = "Subject: {subject}\n\n{body}"
-    server.sendmail('bluespoose@gmail.com' , 'armankhondsker@gmail.com', msg) #send email from bluespoose to my official gmail
+    server.login(email_sender, email_password)
+    server.sendmail(email_sender, email_receiver, msg)
     server.quit()
     print("Email has been sent")
 
 check_price()
-
-# while(True):
-#     time.sleep(60 * 60)
